@@ -311,7 +311,7 @@ async function generateExpressTemplate() {
     execSync("npm install -D eslint prettier", { stdio: "inherit" });
   }
 
-    // Folder structure
+  // Folder structure
   const folders = [
     "src",
     "src/controllers",
@@ -325,7 +325,7 @@ async function generateExpressTemplate() {
   folders.forEach(f => fs.mkdirSync(f, { recursive: true }));
 
   // src/.env 
-  fs.writeFileSync("src/.env",`//--------Your environments variables here--------\nMONGO_URL=your-mongodb-url`);
+  fs.writeFileSync("src/.env", `//--------Your environments variables here--------\nMONGO_URL=your-mongodb-url`);
   // src/.controllers/index.js
 
   const indexFolders = [
@@ -336,10 +336,10 @@ async function generateExpressTemplate() {
     "src/models",
     "src/middlewares"
   ]
-  indexFolders.forEach(f =>  fs.writeFileSync(`${f}/index.js`,`//--------Your ${f} code here--------`));
+  indexFolders.forEach(f => fs.writeFileSync(`${f}/index.js`, `//--------Your ${f} code here--------`));
 
   // src/config/db.js
-  fs.writeFileSync("src/config/db.js",`//--------Your db code here--------`);
+  fs.writeFileSync("src/config/db.js", `//--------Your db code here--------`);
 
   fs.writeFileSync("server.js", `
   import express from "express";
