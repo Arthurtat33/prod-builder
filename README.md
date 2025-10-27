@@ -1,11 +1,21 @@
 
-  ![Tech](https://img.shields.io/badge/Type-${projectType.replace(/ /g, "_")}-brightgreen)
+ ## ![Tech](https://img.shields.io/badge/Type-${projectType.replace(/ /g, "_")}-brightgreen)
 
-🚀 About
+ # After module installation run this following command
 
-This is a ${projectType} project scaffolded with the Ultimate Project Wizard.
+  \`\`\`
+    bash 
+    npm install
+    npm link
+    \`\`\`
+    
+ * using the *npm link* command you will be able to use the project builder every where usin your terminal command *init-project*
 
-📦 Installation
+* 🚀 About
+
+# This is a project scaffolded with the Ultimate Project Wizard.
+
+* 📦 Installation
 
   \`\`\`
     bash 
@@ -14,7 +24,7 @@ This is a ${projectType} project scaffolded with the Ultimate Project Wizard.
     # if applicable
     \`\`\`
 
-🏃 Usage
+* 🏃 Usage
 
     React / Vanilla: Open\`index.html\` in browser or use Vite / Parcel.
 
@@ -22,7 +32,7 @@ This is a ${projectType} project scaffolded with the Ultimate Project Wizard.
 
     Express: Run \`node src / server.js\` and visit http://localhost:3000.
 
-📁 Project Structure
+* 📁 Project Structure
 
     \`\`\`
      ${projectType}
@@ -34,16 +44,14 @@ This is a ${projectType} project scaffolded with the Ultimate Project Wizard.
      │   └── index.js(Node) └── README.md
      \`\`\`
 
-👤 Author
+* 👤 Author Artdev
 
-  Artdev
+- 📧 Email: tatchouarthur@gmail.com
 
-📧 Email: tatchouarthur@gmail.com
+- 🌐 Portfolio: https://artdev-portofolio.netlify.app
 
-🌐 Portfolio: https://artdev-portofolio.netlify.app
+- 🔗 LinkedIn: https://www.linkedin.com/in/arthur-tatchou-587ba92a9
 
-🔗 LinkedIn: https://www.linkedin.com/in/arthur-tatchou-587ba92a9
+- 💻 GitHub: https://github.com/Arthurtat33
 
-💻 GitHub: https://github.com/Arthurtat33
-
-📱 WhatsApp: +237652949715
+- 📱 WhatsApp: +237652949715
