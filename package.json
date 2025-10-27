@@ -1,0 +1,17 @@
+{
+  "name": "prod-builder",
+  "version": "1.0.0",
+  "description": "CLI to scaffold a JS project structure",
+  "main": "index.js",
+  "bin": {
+    "init-project": "./index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.7"
+  }
+}
