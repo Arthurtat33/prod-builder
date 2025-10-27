@@ -1,15 +1,15 @@
 
- ## ![Tech](https://img.shields.io/badge/Type-${projectType.replace(/ /g, "_")}-brightgreen)
+## Prod-builder
 
- # After module installation run this following command
+# After module installation run this following command
 
-  \`\`\`
+  ```
     bash 
     npm install
     npm link
-    \`\`\`
+  ```
     
- * using the *npm link* command you will be able to use the project builder every where usin your terminal command *init-project*
+* using the *npm link* command you will be able to use the project builder every where usin your terminal command *init-project*
 
 * 🚀 About
 
@@ -17,24 +17,24 @@
 
 * 📦 Installation
 
-  \`\`\`
+  ```
     bash 
     cd ${projectName}
     npm install
     # if applicable
-    \`\`\`
+  ```
 
 * 🏃 Usage
 
-    React / Vanilla: Open\`index.html\` in browser or use Vite / Parcel.
+    React / Vanilla: Open `index.html` in browser or use Vite / Parcel.
 
-    Node.js: Run\`node src / index.js\`.
+    Node.js: Run `node src / index.js`.
 
-    Express: Run \`node src / server.js\` and visit http://localhost:3000.
+    Express: Run `node src / server.js` and visit http://localhost:3000.
 
 * 📁 Project Structure
 
-    \`\`\`
+    ```
      ${projectType}
      Project 
      │   ├── components / (React) 
@@ -42,7 +42,7 @@
      │   ├── pages / (React) 
      │   ├── server.js(Express) 
      │   └── index.js(Node) └── README.md
-     \`\`\`
+    ```
 
 * 👤 Author Artdev
 
