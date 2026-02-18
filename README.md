@@ -48,7 +48,7 @@
 
 - 📧 Email: tatchouarthur@gmail.com
 
-- 🌐 Portfolio: https://artdev-portofolio.netlify.app
+- 🌐 Portfolio: https://arthurtatchou-portfolio.vercel.app
 
 - 🔗 LinkedIn: https://www.linkedin.com/in/arthur-tatchou-587ba92a9
 
