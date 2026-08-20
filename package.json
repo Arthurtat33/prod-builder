@@ -7,13 +7,7 @@
     "init-project": "./bin/index.js"
   },
   "type": "module",
-  "keywords": [
-    "cli",
-    "scaffold",
-    "generator",
-    "ai",
-    "boilerplate"
-  ],
+  "keywords": ["cli", "scaffold", "generator", "ai", "boilerplate"],
   "author": "Artdev",
   "license": "ISC",
   "engines": {

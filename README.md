@@ -62,28 +62,88 @@ prod-builder/
   the Express generator's `.env` file was being written inside `src/`
   instead of the project root (dotenv wouldn't have found it by default).
 
-## AI integration
+## Two separate AI features — don't confuse them
 
-If you opt in (`Want AI help picking a stack & writing your README?`), the
-wizard uses `aiService.js` (a thin wrapper around `@anthropic-ai/sdk`) for
-three things:
+**1. CLI-level AI assistant** (opt in via `Want AI help picking a stack &
+writing your README?`). This helps *you build the project*:
+- **Stack suggestion** — describe your project in a sentence, AI picks
+  the closest matching generator id and whether TypeScript makes sense.
+- **README generation** — instead of the generic template, AI writes a
+  real README from your description + the actual folder tree.
+- **One-off endpoint scaffolding** — right after scaffolding, describe a
+  feature ("JWT login/register") and AI writes real files into the project
+  once, following that stack's conventions.
 
-1. **Stack suggestion** — describe your project in a sentence, AI picks
-   the closest matching generator id and whether TypeScript makes sense.
-2. **README generation** — instead of the generic template, AI writes a
-   real README from your description + the actual folder tree.
-3. **Endpoint/feature scaffolding** — for backend/fullstack stacks, after
-   scaffolding you can describe a feature ("JWT login/register", "CRUD for
-   posts with pagination") and AI returns real files written straight into
-   the project, following that stack's conventions.
+**2. Baked-in project AI feature** (opt in per-project via `Bake AI into
+this project?`, shown for Express, FastAPI, and Next.js). This adds a
+*permanent* AI capability to the app you're generating — not a one-time
+generation step, but actual source files that ship with the project:
+- Express → `src/services/ai.service.js` + `src/controllers/ai.controller.js`
+  + `src/routes/ai.routes.js`, mounted at `POST /api/ai/chat`
+- FastAPI → `app/services/ai_service.py` + `app/routers/ai.py`, mounted at
+  `POST /ai/chat`
+- Next.js → `app/api/ai/route.js`, a real route handler at `POST /api/ai`
 
-The API key resolves in order: `ANTHROPIC_API_KEY` env var → saved key in
-`~/.prodbuilderrc.json` → interactive password prompt (with an offer to
-save it for next time). Nothing is sent anywhere unless you opt in.
+Both features use `ANTHROPIC_API_KEY`. For the CLI assistant it resolves:
+env var → saved key in `~/.prodbuilderrc.json` → interactive password
+prompt (offers to save for next time). For the baked-in project feature,
+the key is just left blank in the generated `.env`/`.env.local` for you to
+fill in — the generated project has zero access to your CLI's saved key.
 
-`ANTHROPIC_MODEL` is configurable — check
+`ANTHROPIC_MODEL` is configurable in both places — check
 [docs.claude.com](https://docs.claude.com) for current model IDs before
 you ship this, since they change over time.
+
+## Database setup
+
+Express, FastAPI, and Next.js all prompt for **MongoDB / PostgreSQL /
+MySQL / none**. Whichever you pick, you get a real, connected `users`
+resource, not just a driver installed with nothing wired up:
+
+| Stack | Config file | Model | Route |
+|---|---|---|---|
+| Express | `src/config/db.js` | `src/models/user.model.js` (Mongoose schema, or `pg`/`mysql2` pool queries) | `GET/POST /api/users` |
+| FastAPI | `app/core/database.py` | `app/models/user.py` (Motor doc, or SQLAlchemy model) | `GET/POST /users` |
+| Next.js | `lib/db.js` | `lib/models/user.js` | `GET/POST /api/users` (App Router route handler) |
+
+React (Vite) deliberately has **no** database option — a frontend
+shouldn't hold DB credentials. If your SSR server needs data, call a
+backend API (e.g. the Express generator) instead of connecting to a
+database directly from the SSR process.
+
+## SSR / SSG
+
+- **React (Vite)** now asks for a rendering mode:
+  - `csr` — the original SPA behavior (`vite` dev server, `BrowserRouter`).
+  - `ssr` — real `entry-client.jsx` / `entry-server.jsx` split, an Express
+    server (`server.js`) that uses Vite in middleware mode for dev and
+    serves the built bundle in prod, following the standard Vite SSR guide.
+  - `ssg` — same entry-server split, plus `prerender.js`, which renders a
+    list of routes to static HTML after `npm run build`. Output in
+    `dist/client` is fully static and needs no Node server to serve.
+- **Next.js** asks for `ssr` or `ssg` and generates a demo route proving
+  it: `app/dashboard/page.jsx` with `export const dynamic = "force-dynamic"`
+  for SSR, or `app/posts/[id]/page.jsx` with `generateStaticParams()` for
+  SSG — Next handles both natively, no custom server needed.
+- **Vanilla HTML/CSS/JS** is already static output by definition, so no
+  render-mode prompt applies.
+
+## Generated code quality
+
+Every React (Vite) project now ships with actual structure instead of
+placeholder `<div>X component</div>` stubs:
+- `react-router-dom` wired up (`src/routes/AppRoutes.jsx`, real `Home`/
+  `About` pages, `NavLink` with active-state styling)
+- `AuthContext` actually wraps the app in `App.jsx`, not just defined and
+  ignored
+- `useMobile`/`useToast` hooks actually used (Navbar responds to viewport)
+- Every UI component (`Navbar`, `Footer`, `Sidebar`, `Button`, `Card`,
+  `Alert`, `Modal`) has real markup + a matching `index.css`, not a bare div
+
+Two bugs from the original template were also fixed along the way: the
+`index.html` was missing its `<!DOCTYPE html>` and pointed at the wrong
+script path, and Express's `.env` was written inside `src/` where dotenv
+wouldn't find it by default.
 
 ## Usage
 
@@ -96,16 +156,18 @@ init-project
 ## Roadmap / how to extend
 
 Each of these is "write one generator file that matches `BaseGenerator`'s
-shape, add it to `generators/index.js`":
+shape, add it to `generators/index.js`" — the capability flags
+(`supportsDatabase`, `supportsProjectAI`, `supportsRenderMode`) and the
+shared `databaseTemplates.js` are already there to reuse:
 
 | Addition | Notes |
 |---|---|
-| Vue 3 + Vite | mirror `react-vite.generator.js`, swap JSX for SFCs |
-| SvelteKit | `category: "fullstack"`, no separate `index.html` needed |
-| NestJS | `category: "backend"`, generate module/controller/service triads |
-| Fastify | lighter alternative to the Express generator |
-| Django / Flask | `usesNpmInit: false`, same pattern as the FastAPI generator |
-| Go (net/http or Gin) | `usesNpmInit: false`, write `go.mod` + `main.go` |
+| Vue 3 + Vite | mirror `react-vite.generator.js`, swap JSX for SFCs; same `supportsRenderMode` pattern works with `vite-plugin-vue` SSR |
+| SvelteKit | `category: "fullstack"`, SSR/SSG native — no custom server needed, similar to the Next.js generator |
+| NestJS | `category: "backend"`, `supportsDatabase: true` (reuse `databaseTemplates.js` with a TypeORM/Mongoose adapter), generate module/controller/service triads |
+| Fastify | lighter alternative to the Express generator, same DB/AI plumbing |
+| Django / Flask | `usesNpmInit: false`, mirror the FastAPI generator's DB branching |
+| Go (net/http or Gin) | `usesNpmInit: false`, write `go.mod` + `main.go`, own DB template set (`database/sql` + driver) |
 | React Native (bare) | reuse INFOcAMPUS's existing folder conventions as the template |
 
 Other directions worth considering once the plugin surface grows:

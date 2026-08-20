@@ -12,6 +12,8 @@ import { isValidProjectName } from "../utils/validators.js";
 
 export class ProjectBuilder {
   async run() {
+    // --- CLI-level AI assistant: helps pick a stack & writes the README.
+    // This is separate from "AI integration inside the generated project" below.
     const { useAI } = await inquirer.prompt([
       {
         name: "useAI",
@@ -80,6 +82,55 @@ export class ProjectBuilder {
       useTypeScript = ts;
     }
 
+    let renderMode = null;
+    if (Generator.supportsRenderMode) {
+      const { mode } = await inquirer.prompt([
+        {
+          name: "mode",
+          type: "list",
+          message: "\ud83d\udda5\ufe0f Rendering mode:",
+          choices: Generator.renderModeChoices || [
+            { name: "CSR \u2014 client-side rendered (default SPA)", value: "csr" },
+            { name: "SSR \u2014 server-rendered on every request", value: "ssr" },
+            { name: "SSG \u2014 pre-rendered static pages", value: "ssg" },
+          ],
+        },
+      ]);
+      renderMode = mode;
+    }
+
+    let database = "none";
+    if (Generator.supportsDatabase) {
+      const { db } = await inquirer.prompt([
+        {
+          name: "db",
+          type: "list",
+          message: "\ud83d\uddc4\ufe0f Database:",
+          choices: [
+            { name: "MongoDB (Mongoose)", value: "mongodb" },
+            { name: "PostgreSQL", value: "postgres" },
+            { name: "MySQL", value: "mysql" },
+            { name: "None / skip", value: "none" },
+          ],
+          default: "none",
+        },
+      ]);
+      database = db;
+    }
+
+    let projectAI = false;
+    if (Generator.supportsProjectAI) {
+      const { wantAI } = await inquirer.prompt([
+        {
+          name: "wantAI",
+          type: "confirm",
+          message: "\ud83e\udd16 Bake AI into this project (Claude-powered controller/service + endpoint)?",
+          default: false,
+        },
+      ]);
+      projectAI = wantAI;
+    }
+
     let pm = "npm";
     if (Generator.usesNpmInit) {
       const { pmChoice } = await inquirer.prompt([
@@ -105,6 +156,9 @@ export class ProjectBuilder {
       projectPath,
       useTypeScript,
       pm,
+      renderMode,
+      database,
+      projectAI,
       ai: aiService,
       log,
       fs: fsService,
@@ -126,10 +180,22 @@ export class ProjectBuilder {
     }
 
     await this.writeReadme({ Generator, generator, projectName, description, aiService });
+    this.ensureGitignore();
     gitService.initAndCommit();
 
     log.success(`\n\u2705 Project "${projectName}" created successfully!`);
     log.warn(`\ud83d\udccc Tip: cd ${projectName} && git log to see your first commit.`);
+  }
+
+  // Generators can write their own .gitignore; this is a safety net so that
+  // .env files (which now often hold real API keys / DB URLs) never end up
+  // in the first commit if a generator forgets.
+  ensureGitignore() {
+    if (fsService.exists(".gitignore")) return;
+    fsService.writeFile(
+      ".gitignore",
+      "node_modules/\n.env\n.env.local\ndist/\nbuild/\n.next/\n__pycache__/\n*.pyc\n"
+    );
   }
 
   async maybeScaffoldEndpoint({ aiService, Generator }) {
@@ -137,7 +203,7 @@ export class ProjectBuilder {
       {
         name: "wantEndpoint",
         type: "confirm",
-        message: "\ud83e\udd16 Want AI to scaffold a sample endpoint/feature for you?",
+        message: "\ud83e\udd16 Want AI to scaffold one more sample endpoint/feature right now?",
         default: false,
       },
     ]);
