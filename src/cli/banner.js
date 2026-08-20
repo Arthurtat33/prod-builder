@@ -1,0 +1,8 @@
+import chalk from "chalk";
+
+export function printBanner() {
+  console.clear();
+  console.log(chalk.cyan.bold("\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"));
+  console.log(chalk.cyan.bold("\u2551   \ud83d\ude80  Ultimate Project Wizard v2   \u2551"));
+  console.log(chalk.cyan.bold("\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n"));
+}

@@ -1,17 +1,22 @@
 {
   "name": "prod-builder",
-  "version": "1.0.1",
-  "description": "CLI to scaffold a JS project structure",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "AI-assisted CLI to scaffold multi-language, multi-framework project structures",
+  "main": "bin/index.js",
   "bin": {
-    "init-project": "./index.js"
+    "init-project": "./bin/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "module",
+  "keywords": ["cli", "scaffold", "generator", "ai", "boilerplate"],
+  "author": "Artdev",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
     "chalk": "^4.1.2",
+    "dotenv": "^16.4.5",
     "inquirer": "^8.2.7"
   }
 }
